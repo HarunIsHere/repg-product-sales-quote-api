@@ -5,5 +5,5 @@ load_dotenv()
 
 DATABASE_URL = os.getenv(
     "DATABASE_URL",
-    "postgresql://postgres:postgres@localhost:5432/repg_db"
+    "postgresql://harun@localhost:5432/repg_db"
 )
