@@ -28,7 +28,7 @@ def get_product(product_id: str, db: Session = Depends(get_db)):
 @router.post(
     "/",
     response_model=ProductResponse,
-    dependencies=[Depends(require_roles("admin"))],
+    dependencies=[Depends(require_roles("admin", "super_admin"))],
 )
 def create_product(product: ProductCreate, db: Session = Depends(get_db)):
     db_product = Product(**product.model_dump())
@@ -43,7 +43,7 @@ def create_product(product: ProductCreate, db: Session = Depends(get_db)):
 @router.put(
     "/{product_id}",
     response_model=ProductResponse,
-    dependencies=[Depends(require_roles("admin"))],
+    dependencies=[Depends(require_roles("admin", "super_admin"))],
 )
 def update_product(
     product_id: str,
@@ -68,7 +68,7 @@ def update_product(
 
 @router.delete(
     "/{product_id}",
-    dependencies=[Depends(require_roles("admin"))],
+    dependencies=[Depends(require_roles("admin", "super_admin"))],
 )
 def delete_product(product_id: str, db: Session = Depends(get_db)):
     product = db.query(Product).filter(Product.id == product_id).first()
