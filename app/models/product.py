@@ -1,4 +1,7 @@
-from sqlalchemy import Boolean, Column, DateTime, Integer, Numeric, String, Text
+import uuid
+
+from sqlalchemy import Boolean, Column, DateTime, Numeric, String
+from sqlalchemy.dialects.postgresql import JSON, UUID
 from sqlalchemy.sql import func
 
 from app.db.base import Base
@@ -7,26 +10,22 @@ from app.db.base import Base
 class Product(Base):
     __tablename__ = "products"
 
-    id = Column(Integer, primary_key=True, index=True)
-    name = Column(String(200), nullable=False)
-    slug = Column(String(220), unique=True, nullable=False, index=True)
-    category = Column(String(50), nullable=False)
-    short_description = Column(String(300), nullable=True)
-    description = Column(Text, nullable=True)
-    price = Column(Numeric(10, 2), nullable=True)
-    min_operating_temperature_c = Column(Numeric(6, 2), nullable=True)
-    max_operating_temperature_c = Column(Numeric(6, 2), nullable=True)
-    daily_water_output_liters = Column(Numeric(10, 2), nullable=True)
-    min_power_output_kwh = Column(Numeric(10, 2), nullable=True)
-    max_power_output_kwh = Column(Numeric(10, 2), nullable=True)
-    portable = Column(Boolean, nullable=False, default=False)
-    off_grid_capable = Column(Boolean, nullable=False, default=False)
-    catalog_url = Column(Text, nullable=True)
-    is_active = Column(Boolean, nullable=False, default=True)
-    created_at = Column(DateTime, nullable=False, server_default=func.now())
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    name = Column(String, nullable=False)
+    description = Column(String, nullable=False)
+    price = Column(Numeric(12, 2), nullable=False)
+    currency = Column(String, nullable=False)
+    sku = Column(String, unique=True, nullable=False)
+    category = Column(String, nullable=False)
+    subcategory = Column(String, nullable=False)
+    product_type = Column(String, nullable=False)
+    stock_status = Column(String, nullable=False)
+    lead_time = Column(String, nullable=False)
+    technical_specs = Column(JSON, nullable=False)
+    is_active = Column(Boolean, default=True, nullable=False)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(
-        DateTime,
-        nullable=False,
+        DateTime(timezone=True),
         server_default=func.now(),
-        onupdate=func.now()
+        onupdate=func.now(),
     )
