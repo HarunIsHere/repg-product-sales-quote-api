@@ -6,6 +6,7 @@ from app.api.products import router as products_router
 from app.api.users import router as users_router
 from app.core.bootstrap import seed_first_superadmin
 from app.db.session import SessionLocal
+from app.api.quotes import router as quotes_router
 
 app = FastAPI(title="RePG Product, Sales & Quote Management API")
 
@@ -13,6 +14,7 @@ app.include_router(users_router)
 app.include_router(auth_router)
 app.include_router(products_router)
 app.include_router(admin_users_router)
+app.include_router(quotes_router)
 
 
 @app.on_event("startup")
