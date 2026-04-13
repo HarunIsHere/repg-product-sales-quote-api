@@ -89,6 +89,58 @@ def create_order_from_quote(quote_id, db: Session = Depends(get_db)):
     )
 
 
+@router.get(
+    "/",
+    response_model=list[OrderResponse],
+    dependencies=[Depends(require_roles("admin", "super_admin"))],
+)
+def get_all_orders(
+    skip: int = Query(0, ge=0),
+    limit: int = Query(10, ge=1, le=100),
+    status_value: str | None = Query(default=None),
+    user_id: int | None = Query(default=None),
+    payment_status: str | None = Query(default=None),
+    db: Session = Depends(get_db),
+):
+    query = db.query(Order)
+
+    if status_value:
+        query = query.filter(Order.status == status_value)
+
+    if user_id is not None:
+        query = query.filter(Order.user_id == user_id)
+
+    if payment_status:
+        query = query.filter(Order.payment_status == payment_status)
+
+    orders = (
+        query.order_by(Order.created_at.desc())
+        .offset(skip)
+        .limit(limit)
+        .all()
+    )
+
+    result = []
+
+    for order in orders:
+        order_items = db.query(OrderItem).filter(OrderItem.order_id == order.id).all()
+
+        result.append(
+            OrderResponse(
+                id=order.id,
+                user_id=order.user_id,
+                quote_id=order.quote_id,
+                status=order.status,
+                total_amount=order.total_amount,
+                payment_status=order.payment_status,
+                created_at=str(order.created_at) if order.created_at else None,
+                items=order_items,
+            )
+        )
+
+    return result
+
+
 @router.get("/my", response_model=list[OrderResponse])
 def get_my_orders(
     skip: int = Query(0, ge=0),
