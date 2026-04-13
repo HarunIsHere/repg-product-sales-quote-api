@@ -89,6 +89,8 @@ def create_quote(
 def get_all_quotes(
     status_value: str | None = Query(default=None),
     user_id: int | None = Query(default=None),
+    skip: int = Query(0, ge=0),
+    limit: int = Query(10, ge=1, le=100),
     db: Session = Depends(get_db),
 ):
     query = db.query(Quote)
@@ -99,7 +101,7 @@ def get_all_quotes(
     if user_id is not None:
         query = query.filter(Quote.user_id == user_id)
 
-    quotes = query.order_by(Quote.created_at.desc()).all()
+    quotes = query.order_by(Quote.created_at.desc()).offset(skip).limit(limit).all()
     result = []
 
     for quote in quotes:
@@ -121,10 +123,19 @@ def get_all_quotes(
 
 @router.get("/my", response_model=list[QuoteResponse])
 def get_my_quotes(
+    skip: int = Query(0, ge=0),
+    limit: int = Query(10, ge=1, le=100),
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    quotes = db.query(Quote).filter(Quote.user_id == current_user.id).all()
+    quotes = (
+        db.query(Quote)
+        .filter(Quote.user_id == current_user.id)
+        .order_by(Quote.created_at.desc())
+        .offset(skip)
+        .limit(limit)
+        .all()
+    )
     result = []
 
     for quote in quotes:
