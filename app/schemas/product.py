@@ -15,6 +15,7 @@ class ProductBase(BaseModel):
     subcategory: str
     product_type: str
     stock_status: str
+    stock_quantity: int
     lead_time: str
     technical_specs: dict
     is_active: bool = True
@@ -34,6 +35,7 @@ class ProductUpdate(BaseModel):
     subcategory: Optional[str] = None
     product_type: Optional[str] = None
     stock_status: Optional[str] = None
+    stock_quantity: Optional[int] = None
     lead_time: Optional[str] = None
     technical_specs: Optional[dict] = None
     is_active: Optional[bool] = None

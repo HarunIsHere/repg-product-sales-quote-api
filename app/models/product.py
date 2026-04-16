@@ -1,6 +1,6 @@
 import uuid
 
-from sqlalchemy import Boolean, Column, DateTime, Numeric, String
+from sqlalchemy import Boolean, Column, DateTime, Numeric, String, Integer
 from sqlalchemy.dialects.postgresql import JSON, UUID
 from sqlalchemy.sql import func
 
@@ -20,6 +20,7 @@ class Product(Base):
     subcategory = Column(String, nullable=False)
     product_type = Column(String, nullable=False)
     stock_status = Column(String, nullable=False)
+    stock_quantity = Column(Integer, nullable=False, default=0)
     lead_time = Column(String, nullable=False)
     technical_specs = Column(JSON, nullable=False)
     is_active = Column(Boolean, default=True, nullable=False)
