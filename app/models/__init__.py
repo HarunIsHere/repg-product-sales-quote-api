@@ -1,5 +1,6 @@
 from app.models.application_area import ApplicationArea
 from app.models.order import Order
+from app.models.order_item import OrderItem
 from app.models.product import Product
 from app.models.quote import Quote
 from app.models.quote_item import QuoteItem

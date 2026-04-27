@@ -11,7 +11,7 @@ class UserCreate(BaseModel):
 class UserResponse(BaseModel):
     id: int
     full_name: str
-    email: EmailStr
+    email: str
     company_name: str | None = None
     role: str
     is_active: bool

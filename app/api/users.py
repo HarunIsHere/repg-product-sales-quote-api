@@ -1,7 +1,8 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
+from app.api.deps import require_roles
 from app.core.security import hash_password
 from app.db.session import get_db
 from app.models.user import User
@@ -34,3 +35,16 @@ def create_user(user: UserCreate, db: Session = Depends(get_db)):
     except ValueError as e:
         db.rollback()
         raise HTTPException(status_code=400, detail=str(e))
+
+
+@router.get(
+    "/",
+    response_model=list[UserResponse],
+    dependencies=[Depends(require_roles("admin", "super_admin"))],
+)
+def get_all_users(
+    skip: int = Query(0, ge=0),
+    limit: int = Query(10, ge=1, le=100),
+    db: Session = Depends(get_db),
+):
+    return db.query(User).offset(skip).limit(limit).all()
