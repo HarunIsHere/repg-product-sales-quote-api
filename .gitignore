@@ -8,3 +8,5 @@ alembic/versions/__pycache__/
 
 .idea/
 keys/
+
+frontend_backup_working/

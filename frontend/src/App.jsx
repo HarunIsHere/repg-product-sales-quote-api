@@ -1,251 +1,364 @@
 import "./App.css";
 
-const content = {
+const API_BASE = "https://api.ayartuerk.me";
+
+const translations = {
   en: {
+    language: "EN",
+    otherLanguage: "TR",
+    otherPath: "/tr/",
     nav: {
       home: "Home",
-      energy: "Energy Applications",
       products: "Products",
-      quote: "Quote",
-      contact: "Contact",
+      quotes: "Quotes",
+      orders: "Orders",
+      admin: "Admin",
+      api: "API",
     },
-    brandKicker: "Renewable Energy Power Generation",
-    title: "RePG Product & Quote Portal",
-    heroLabel: "New Generation Energy & Water Technology",
-    heroTitle:
-      "Backend-powered product and quote management for clean technology solutions.",
+    heroTitle: "Clean technology product and quote management portal.",
     heroText:
-      "A responsive frontend interface for browsing products, managing quote requests, and presenting RePG-style renewable energy and water technology workflows.",
-    explore: "Explore Products",
-    requestQuote: "Request Quote",
-    systemStatus: "System Status",
-    liveApi: "Live API Connected",
-    apiOne: "FastAPI Backend",
-    apiTwo: "Product Catalogue",
-    apiThree: "Quote Management",
-    applicationsLabel: "Applications",
-    applicationsTitle: "Clean technology areas",
-    applicationsText:
-      "The interface follows a corporate clean-energy style and presents the backend project as a structured product, quote, and order system.",
-    applications: [
-      {
-        title: "Energy Applications",
-        text: "Systems focused on renewable energy, waste heat recovery, heating, cooling, and electricity generation.",
-      },
-      {
-        title: "Air Water Applications",
-        text: "Technology concepts connected to humidity, air, water recovery, and sustainable resource use.",
-      },
-      {
-        title: "Industrial Solutions",
-        text: "Clean technology solutions for facilities that need efficient, scalable, and future-ready systems.",
-      },
-    ],
-    productLabel: "Products",
-    productTitle: "Product and quote workflow",
-    productText:
-      "This frontend will later connect directly to the backend endpoints for product browsing, customer quote creation, admin approval, and order generation.",
-    products: [
+      "A RePG-style frontend for product browsing, quote requests, order tracking, and admin workflows powered by the FastAPI backend.",
+    primaryCta: "Browse Products",
+    secondaryCta: "Open API Docs",
+    statusTitle: "Live Backend",
+    statusItems: ["FastAPI", "PostgreSQL", "JWT Auth", "Quote Workflow"],
+    introTitle: "Built around renewable energy and water technology workflows.",
+    introText:
+      "The interface follows a clean corporate layout inspired by RePG's energy and water technology positioning, while exposing the backend project's product, quote, order, and admin capabilities.",
+    cards: [
       {
         title: "Product Catalogue",
-        text: "Browse available RePG product data from the backend API.",
+        text: "Public users can browse products and inspect product details.",
+        link: "/en/products",
       },
       {
-        title: "Quote Requests",
-        text: "Customers can request quotes for selected products and quantities.",
+        title: "Quote Workflow",
+        text: "Authenticated users can create quote requests and view their quote history.",
+        link: "/en/quotes",
       },
       {
-        title: "Order Flow",
-        text: "Approved quotes can be converted into orders with auditable item snapshots.",
+        title: "Order Tracking",
+        text: "Users can view orders created from approved quotes.",
+        link: "/en/orders",
+      },
+      {
+        title: "Admin Controls",
+        text: "Admins can manage products, quote status, order creation, and internal users.",
+        link: "/en/admin",
       },
     ],
-    quoteLabel: "Quote Portal",
-    quoteTitle:
-      "Request clean technology products through a structured backend workflow.",
-    openDocs: "Open API Docs",
-    footerText: "Frontend prototype for desktop and mobile.",
-    backTop: "Back to top",
+    pages: {
+      products: {
+        title: "Products",
+        text: "Use this page for product catalogue browsing and product detail access.",
+        actions: [
+          ["GET /products/", "List public products", `${API_BASE}/docs#/products`],
+          ["GET /products/{product_id}", "View one product", `${API_BASE}/docs#/products`],
+        ],
+      },
+      login: {
+        title: "Login",
+        text: "Use this page later for JWT login and token storage.",
+        actions: [
+          ["POST /auth/login", "Login and receive access token", `${API_BASE}/docs#/auth`],
+          ["GET /auth/me", "Check current authenticated user", `${API_BASE}/docs#/auth`],
+        ],
+      },
+      register: {
+        title: "Register",
+        text: "Use this page later for public customer registration.",
+        actions: [
+          ["POST /users/", "Create public user account", `${API_BASE}/docs#/users`],
+        ],
+      },
+      quotes: {
+        title: "Quotes",
+        text: "Use this page later for quote creation and quote history.",
+        actions: [
+          ["POST /quotes/", "Create quote request", `${API_BASE}/docs#/quotes`],
+          ["GET /quotes/my", "View my quotes", `${API_BASE}/docs#/quotes`],
+          ["GET /quotes/{quote_id}", "View one quote", `${API_BASE}/docs#/quotes`],
+        ],
+      },
+      orders: {
+        title: "Orders",
+        text: "Use this page later for order history and order detail views.",
+        actions: [
+          ["GET /orders/my", "View my orders", `${API_BASE}/docs#/orders`],
+          ["GET /orders/{order_id}", "View one order", `${API_BASE}/docs#/orders`],
+        ],
+      },
+      admin: {
+        title: "Admin Dashboard",
+        text: "Use this page later for admin-only product, quote, order, and user controls.",
+        actions: [
+          ["POST /products/", "Create product", `${API_BASE}/docs#/products`],
+          ["PUT /products/{product_id}", "Update product", `${API_BASE}/docs#/products`],
+          ["DELETE /products/{product_id}", "Delete product", `${API_BASE}/docs#/products`],
+          ["GET /quotes/", "List all quotes", `${API_BASE}/docs#/quotes`],
+          ["PATCH /quotes/{quote_id}/status", "Approve or reject quote", `${API_BASE}/docs#/quotes`],
+          ["POST /orders/from-quote/{quote_id}", "Create order from quote", `${API_BASE}/docs#/orders`],
+          ["GET /orders/", "List all orders", `${API_BASE}/docs#/orders`],
+          ["POST /admin/users/", "Create internal admin user", `${API_BASE}/docs#/admin-users`],
+        ],
+      },
+      api: {
+        title: "API Endpoint Access",
+        text: "Direct access panel for the backend endpoints currently exposed by the project.",
+        actions: [
+          ["GET /", "Root health endpoint", `${API_BASE}/`],
+          ["Swagger Docs", "Interactive OpenAPI documentation", `${API_BASE}/docs`],
+          ["OpenAPI JSON", "Raw OpenAPI schema", `${API_BASE}/openapi.json`],
+        ],
+      },
+    },
+    footer: "Frontend prototype for RePG Product & Quote Management API.",
   },
   tr: {
+    language: "TR",
+    otherLanguage: "EN",
+    otherPath: "/en/",
     nav: {
       home: "Ana Sayfa",
-      energy: "Enerji Uygulamaları",
       products: "Ürünler",
-      quote: "Teklif",
-      contact: "İletişim",
+      quotes: "Teklifler",
+      orders: "Siparişler",
+      admin: "Admin",
+      api: "API",
     },
-    brandKicker: "Yenilenebilir Enerji Güç Üretimi",
-    title: "RePG Ürün ve Teklif Portalı",
-    heroLabel: "Yeni Nesil Enerji ve Su Teknolojisi",
-    heroTitle:
-      "Temiz teknoloji çözümleri için backend destekli ürün ve teklif yönetimi.",
+    heroTitle: "Temiz teknoloji ürün ve teklif yönetim portalı.",
     heroText:
-      "Ürünleri incelemek, teklif taleplerini yönetmek ve RePG tarzı yenilenebilir enerji ve su teknolojisi iş akışlarını sunmak için responsive frontend arayüzü.",
-    explore: "Ürünleri İncele",
-    requestQuote: "Teklif İste",
-    systemStatus: "Sistem Durumu",
-    liveApi: "Canlı API Bağlantısı",
-    apiOne: "FastAPI Backend",
-    apiTwo: "Ürün Kataloğu",
-    apiThree: "Teklif Yönetimi",
-    applicationsLabel: "Uygulamalar",
-    applicationsTitle: "Temiz teknoloji alanları",
-    applicationsText:
-      "Arayüz, kurumsal temiz enerji tarzını takip eder ve backend projesini yapılandırılmış ürün, teklif ve sipariş sistemi olarak sunar.",
-    applications: [
-      {
-        title: "Enerji Uygulamaları",
-        text: "Yenilenebilir enerji, atık ısı geri kazanımı, ısıtma, soğutma ve elektrik üretimine odaklanan sistemler.",
-      },
-      {
-        title: "Hava Su Uygulamaları",
-        text: "Nem, hava, su geri kazanımı ve sürdürülebilir kaynak kullanımı ile bağlantılı teknoloji konseptleri.",
-      },
-      {
-        title: "Endüstriyel Çözümler",
-        text: "Verimli, ölçeklenebilir ve geleceğe hazır sistemlere ihtiyaç duyan tesisler için temiz teknoloji çözümleri.",
-      },
-    ],
-    productLabel: "Ürünler",
-    productTitle: "Ürün ve teklif iş akışı",
-    productText:
-      "Bu frontend daha sonra ürün görüntüleme, müşteri teklif oluşturma, admin onayı ve sipariş oluşturma için doğrudan backend endpointlerine bağlanacak.",
-    products: [
+      "FastAPI backend tarafından desteklenen ürün görüntüleme, teklif talepleri, sipariş takibi ve admin iş akışları için RePG tarzı frontend.",
+    primaryCta: "Ürünleri İncele",
+    secondaryCta: "API Dokümantasyonu",
+    statusTitle: "Canlı Backend",
+    statusItems: ["FastAPI", "PostgreSQL", "JWT Auth", "Teklif İş Akışı"],
+    introTitle: "Yenilenebilir enerji ve su teknolojisi iş akışları etrafında kuruldu.",
+    introText:
+      "Arayüz, RePG'nin enerji ve su teknolojisi konumlandırmasından ilham alan temiz kurumsal bir düzen izlerken backend projesinin ürün, teklif, sipariş ve admin yeteneklerini sunar.",
+    cards: [
       {
         title: "Ürün Kataloğu",
-        text: "Backend API üzerinden mevcut RePG ürün verilerini inceleyin.",
+        text: "Public kullanıcılar ürünleri görüntüleyebilir ve ürün detaylarını inceleyebilir.",
+        link: "/tr/products",
       },
       {
-        title: "Teklif Talepleri",
-        text: "Müşteriler seçilen ürünler ve miktarlar için teklif talep edebilir.",
+        title: "Teklif İş Akışı",
+        text: "Giriş yapan kullanıcılar teklif talebi oluşturabilir ve teklif geçmişini görebilir.",
+        link: "/tr/quotes",
       },
       {
-        title: "Sipariş Akışı",
-        text: "Onaylanan teklifler, denetlenebilir ürün kopyaları ile siparişlere dönüştürülebilir.",
+        title: "Sipariş Takibi",
+        text: "Kullanıcılar onaylanmış tekliflerden oluşturulan siparişleri görüntüleyebilir.",
+        link: "/tr/orders",
+      },
+      {
+        title: "Admin Kontrolleri",
+        text: "Adminler ürünleri, teklif durumlarını, sipariş oluşturmayı ve iç kullanıcıları yönetebilir.",
+        link: "/tr/admin",
       },
     ],
-    quoteLabel: "Teklif Portalı",
-    quoteTitle:
-      "Temiz teknoloji ürünlerini yapılandırılmış backend iş akışı üzerinden talep edin.",
-    openDocs: "API Dokümantasyonunu Aç",
-    footerText: "Masaüstü ve mobil için frontend prototipi.",
-    backTop: "Yukarı dön",
+    pages: {
+      products: {
+        title: "Ürünler",
+        text: "Bu sayfa ürün kataloğu ve ürün detay erişimi için kullanılacak.",
+        actions: [
+          ["GET /products/", "Public ürünleri listele", `${API_BASE}/docs#/products`],
+          ["GET /products/{product_id}", "Tek ürünü görüntüle", `${API_BASE}/docs#/products`],
+        ],
+      },
+      login: {
+        title: "Giriş",
+        text: "Bu sayfa daha sonra JWT login ve token saklama için kullanılacak.",
+        actions: [
+          ["POST /auth/login", "Giriş yap ve access token al", `${API_BASE}/docs#/auth`],
+          ["GET /auth/me", "Mevcut kullanıcıyı kontrol et", `${API_BASE}/docs#/auth`],
+        ],
+      },
+      register: {
+        title: "Kayıt",
+        text: "Bu sayfa daha sonra public müşteri kaydı için kullanılacak.",
+        actions: [
+          ["POST /users/", "Public kullanıcı hesabı oluştur", `${API_BASE}/docs#/users`],
+        ],
+      },
+      quotes: {
+        title: "Teklifler",
+        text: "Bu sayfa daha sonra teklif oluşturma ve teklif geçmişi için kullanılacak.",
+        actions: [
+          ["POST /quotes/", "Teklif talebi oluştur", `${API_BASE}/docs#/quotes`],
+          ["GET /quotes/my", "Tekliflerimi görüntüle", `${API_BASE}/docs#/quotes`],
+          ["GET /quotes/{quote_id}", "Tek teklifi görüntüle", `${API_BASE}/docs#/quotes`],
+        ],
+      },
+      orders: {
+        title: "Siparişler",
+        text: "Bu sayfa daha sonra sipariş geçmişi ve sipariş detayları için kullanılacak.",
+        actions: [
+          ["GET /orders/my", "Siparişlerimi görüntüle", `${API_BASE}/docs#/orders`],
+          ["GET /orders/{order_id}", "Tek siparişi görüntüle", `${API_BASE}/docs#/orders`],
+        ],
+      },
+      admin: {
+        title: "Admin Paneli",
+        text: "Bu sayfa daha sonra admin-only ürün, teklif, sipariş ve kullanıcı kontrolleri için kullanılacak.",
+        actions: [
+          ["POST /products/", "Ürün oluştur", `${API_BASE}/docs#/products`],
+          ["PUT /products/{product_id}", "Ürün güncelle", `${API_BASE}/docs#/products`],
+          ["DELETE /products/{product_id}", "Ürün sil", `${API_BASE}/docs#/products`],
+          ["GET /quotes/", "Tüm teklifleri listele", `${API_BASE}/docs#/quotes`],
+          ["PATCH /quotes/{quote_id}/status", "Teklifi onayla veya reddet", `${API_BASE}/docs#/quotes`],
+          ["POST /orders/from-quote/{quote_id}", "Tekliften sipariş oluştur", `${API_BASE}/docs#/orders`],
+          ["GET /orders/", "Tüm siparişleri listele", `${API_BASE}/docs#/orders`],
+          ["POST /admin/users/", "İç admin kullanıcısı oluştur", `${API_BASE}/docs#/admin-users`],
+        ],
+      },
+      api: {
+        title: "API Endpoint Erişimi",
+        text: "Projede mevcut backend endpointleri için doğrudan erişim paneli.",
+        actions: [
+          ["GET /", "Root health endpoint", `${API_BASE}/`],
+          ["Swagger Docs", "Interactive OpenAPI dokümantasyonu", `${API_BASE}/docs`],
+          ["OpenAPI JSON", "Raw OpenAPI şeması", `${API_BASE}/openapi.json`],
+        ],
+      },
+    },
+    footer: "RePG Product & Quote Management API için frontend prototipi.",
   },
 };
 
 function getLanguage() {
-  const path = window.location.pathname;
-
-  if (path.startsWith("/tr")) {
-    return "tr";
-  }
-
-  return "en";
+  return window.location.pathname.startsWith("/tr") ? "tr" : "en";
 }
 
-function App() {
-  const language = getLanguage();
-  const t = content[language];
+function getPage() {
+  const parts = window.location.pathname.split("/").filter(Boolean);
+  return parts[1] || "home";
+}
 
+function HomePage({ t }) {
   return (
-    <main className="page-shell">
-      <header className="site-header">
-        <div className="brand">
-          <div className="brand-mark">RePG</div>
-          <div>
-            <p className="brand-kicker">{t.brandKicker}</p>
-            <h1>{t.title}</h1>
-          </div>
-        </div>
-
-        <nav className="nav-links" aria-label="Main navigation">
-          <a href="#home">{t.nav.home}</a>
-          <a href="#applications">{t.nav.energy}</a>
-          <a href="#products">{t.nav.products}</a>
-          <a href="#quote">{t.nav.quote}</a>
-          <a href="#contact">{t.nav.contact}</a>
-          <a href="/en/">EN</a>
-          <a href="/tr/">TR</a>
-        </nav>
-      </header>
-
-      <section id="home" className="hero-section">
+    <>
+      <section className="hero-section">
         <div className="hero-content">
-          <p className="section-label">{t.heroLabel}</p>
+          <p className="section-label">RePG Portal</p>
           <h2>{t.heroTitle}</h2>
           <p className="hero-text">{t.heroText}</p>
 
           <div className="hero-actions">
-            <a className="primary-button" href="#products">
-              {t.explore}
+            <a className="primary-button" href={`/${t.language.toLowerCase()}/products`}>
+              {t.primaryCta}
             </a>
-            <a className="secondary-button" href="#quote">
-              {t.requestQuote}
+            <a className="secondary-button" href={`${API_BASE}/docs`}>
+              {t.secondaryCta}
             </a>
           </div>
         </div>
 
-        <div className="hero-card">
-          <p>{t.systemStatus}</p>
-          <h3>{t.liveApi}</h3>
-          <span>{t.apiOne}</span>
-          <span>{t.apiTwo}</span>
-          <span>{t.apiThree}</span>
-        </div>
+        <aside className="hero-card">
+          <p>{t.statusTitle}</p>
+          <h3>api.ayartuerk.me</h3>
+          {t.statusItems.map((item) => (
+            <span key={item}>{item}</span>
+          ))}
+        </aside>
       </section>
 
-      <section id="applications" className="content-section">
-        <div className="section-heading">
-          <p className="section-label">{t.applicationsLabel}</p>
-          <h2>{t.applicationsTitle}</h2>
-          <p>{t.applicationsText}</p>
+      <section className="intro-section">
+        <p className="section-label">Clean Technology</p>
+        <h2>{t.introTitle}</h2>
+        <p>{t.introText}</p>
+      </section>
+
+      <section className="card-grid-section">
+        {t.cards.map((card) => (
+          <a className="feature-card" href={card.link} key={card.title}>
+            <h3>{card.title}</h3>
+            <p>{card.text}</p>
+            <span>Open →</span>
+          </a>
+        ))}
+      </section>
+
+      <section className="endpoint-panel">
+        <div>
+          <p className="section-label">API</p>
+          <h2>{t.pages.api.title}</h2>
+          <p>{t.pages.api.text}</p>
         </div>
 
-        <div className="card-grid">
-          {t.applications.map((item) => (
-            <article className="info-card" key={item.title}>
-              <h3>{item.title}</h3>
-              <p>{item.text}</p>
-            </article>
+        <div className="endpoint-list">
+          {t.pages.api.actions.map(([method, text, link]) => (
+            <a href={link} key={method}>
+              <strong>{method}</strong>
+              <span>{text}</span>
+            </a>
           ))}
         </div>
       </section>
+    </>
+  );
+}
 
-      <section id="products" className="content-section split-section">
-        <div>
-          <p className="section-label">{t.productLabel}</p>
-          <h2>{t.productTitle}</h2>
-          <p>{t.productText}</p>
-        </div>
+function DetailPage({ page, t }) {
+  const data = t.pages[page] || t.pages.api;
 
-        <div className="product-list">
-          {t.products.map((item) => (
-            <article className="product-card" key={item.title}>
-              <h3>{item.title}</h3>
-              <p>{item.text}</p>
-            </article>
-          ))}
-        </div>
-      </section>
+  return (
+    <section className="detail-page">
+      <p className="section-label">RePG Portal</p>
+      <h2>{data.title}</h2>
+      <p>{data.text}</p>
 
-      <section id="quote" className="quote-section">
-        <div>
-          <p className="section-label">{t.quoteLabel}</p>
-          <h2>{t.quoteTitle}</h2>
-        </div>
-        <a className="primary-button" href="https://api.ayartuerk.me/docs">
-          {t.openDocs}
+      <div className="endpoint-list large">
+        {data.actions.map(([method, text, link]) => (
+          <a href={link} key={`${method}-${text}`}>
+            <strong>{method}</strong>
+            <span>{text}</span>
+          </a>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function App() {
+  const language = getLanguage();
+  const page = getPage();
+  const t = translations[language];
+  const base = `/${language}`;
+
+  return (
+    <main className="page-shell">
+      <header className="site-header">
+        <a className="brand" href={`${base}/`}>
+          <div className="brand-mark">RePG</div>
+          <div>
+            <p className="brand-kicker">Renewable Energy Power Generation</p>
+            <h1>Product & Quote Portal</h1>
+          </div>
         </a>
-      </section>
 
-      <footer id="contact" className="site-footer">
+        <nav className="nav-links" aria-label="Main navigation">
+          <a href={`${base}/`}>{t.nav.home}</a>
+          <a href={`${base}/products`}>{t.nav.products}</a>
+          <a href={`${base}/quotes`}>{t.nav.quotes}</a>
+          <a href={`${base}/orders`}>{t.nav.orders}</a>
+          <a href={`${base}/admin`}>{t.nav.admin}</a>
+          <a href={`${base}/api`}>{t.nav.api}</a>
+          <a className="language-switch" href={t.otherPath}>
+            {t.otherLanguage}
+          </a>
+        </nav>
+      </header>
+
+      {page === "home" ? <HomePage t={t} /> : <DetailPage page={page} t={t} />}
+
+      <footer className="site-footer">
+        <p>{t.footer}</p>
         <div>
-          <strong>{t.title}</strong>
-          <p>{t.footerText}</p>
-        </div>
-        <div>
-          <a href="https://api.ayartuerk.me/docs">{t.openDocs}</a>
-          <a href="#home">{t.backTop}</a>
+          <a href={`${base}/login`}>Login</a>
+          <a href={`${base}/register`}>Register</a>
+          <a href={`${API_BASE}/docs`}>Swagger</a>
         </div>
       </footer>
     </main>
