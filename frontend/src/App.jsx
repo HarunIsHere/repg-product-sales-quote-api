@@ -1,12 +1,13 @@
+import { useEffect, useMemo, useState } from "react";
 import "./App.css";
 
 const API_BASE = "https://api.ayartuerk.me";
 
-const translations = {
+const text = {
   en: {
+    portal: "Product & Quote Portal",
     language: "EN",
     otherLanguage: "TR",
-    otherPath: "/tr/",
     nav: {
       home: "Home",
       products: "Products",
@@ -14,110 +15,53 @@ const translations = {
       orders: "Orders",
       admin: "Admin",
       api: "API",
+      dashboard: "Dashboard",
+      login: "Login",
+      register: "Register",
+      logout: "Logout",
     },
     heroTitle: "Clean technology product and quote management portal.",
     heroText:
-      "A RePG-style frontend for product browsing, quote requests, order tracking, and admin workflows powered by the FastAPI backend.",
-    primaryCta: "Browse Products",
-    secondaryCta: "Open API Docs",
-    statusTitle: "Live Backend",
-    statusItems: ["FastAPI", "PostgreSQL", "JWT Auth", "Quote Workflow"],
-    introTitle: "Built around renewable energy and water technology workflows.",
-    introText:
-      "The interface follows a clean corporate layout inspired by RePG's energy and water technology positioning, while exposing the backend project's product, quote, order, and admin capabilities.",
-    cards: [
-      {
-        title: "Product Catalogue",
-        text: "Public users can browse products and inspect product details.",
-        link: "/en/products",
-      },
-      {
-        title: "Quote Workflow",
-        text: "Authenticated users can create quote requests and view their quote history.",
-        link: "/en/quotes",
-      },
-      {
-        title: "Order Tracking",
-        text: "Users can view orders created from approved quotes.",
-        link: "/en/orders",
-      },
-      {
-        title: "Admin Controls",
-        text: "Admins can manage products, quote status, order creation, and internal users.",
-        link: "/en/admin",
-      },
-    ],
-    pages: {
-      products: {
-        title: "Products",
-        text: "Use this page for product catalogue browsing and product detail access.",
-        actions: [
-          ["GET /products/", "List public products", `${API_BASE}/docs#/products`],
-          ["GET /products/{product_id}", "View one product", `${API_BASE}/docs#/products`],
-        ],
-      },
-      login: {
-        title: "Login",
-        text: "Use this page later for JWT login and token storage.",
-        actions: [
-          ["POST /auth/login", "Login and receive access token", `${API_BASE}/docs#/auth`],
-          ["GET /auth/me", "Check current authenticated user", `${API_BASE}/docs#/auth`],
-        ],
-      },
-      register: {
-        title: "Register",
-        text: "Use this page later for public customer registration.",
-        actions: [
-          ["POST /users/", "Create public user account", `${API_BASE}/docs#/users`],
-        ],
-      },
-      quotes: {
-        title: "Quotes",
-        text: "Use this page later for quote creation and quote history.",
-        actions: [
-          ["POST /quotes/", "Create quote request", `${API_BASE}/docs#/quotes`],
-          ["GET /quotes/my", "View my quotes", `${API_BASE}/docs#/quotes`],
-          ["GET /quotes/{quote_id}", "View one quote", `${API_BASE}/docs#/quotes`],
-        ],
-      },
-      orders: {
-        title: "Orders",
-        text: "Use this page later for order history and order detail views.",
-        actions: [
-          ["GET /orders/my", "View my orders", `${API_BASE}/docs#/orders`],
-          ["GET /orders/{order_id}", "View one order", `${API_BASE}/docs#/orders`],
-        ],
-      },
-      admin: {
-        title: "Admin Dashboard",
-        text: "Use this page later for admin-only product, quote, order, and user controls.",
-        actions: [
-          ["POST /products/", "Create product", `${API_BASE}/docs#/products`],
-          ["PUT /products/{product_id}", "Update product", `${API_BASE}/docs#/products`],
-          ["DELETE /products/{product_id}", "Delete product", `${API_BASE}/docs#/products`],
-          ["GET /quotes/", "List all quotes", `${API_BASE}/docs#/quotes`],
-          ["PATCH /quotes/{quote_id}/status", "Approve or reject quote", `${API_BASE}/docs#/quotes`],
-          ["POST /orders/from-quote/{quote_id}", "Create order from quote", `${API_BASE}/docs#/orders`],
-          ["GET /orders/", "List all orders", `${API_BASE}/docs#/orders`],
-          ["POST /admin/users/", "Create internal admin user", `${API_BASE}/docs#/admin-users`],
-        ],
-      },
-      api: {
-        title: "API Endpoint Access",
-        text: "Direct access panel for the backend endpoints currently exposed by the project.",
-        actions: [
-          ["GET /", "Root health endpoint", `${API_BASE}/`],
-          ["Swagger Docs", "Interactive OpenAPI documentation", `${API_BASE}/docs`],
-          ["OpenAPI JSON", "Raw OpenAPI schema", `${API_BASE}/openapi.json`],
-        ],
-      },
-    },
-    footer: "Frontend prototype for RePG Product & Quote Management API.",
+      "Browse products, request quotes, track orders, and operate role-based backend workflows from one frontend.",
+    loginTitle: "Login",
+    registerTitle: "Register",
+    dashboardTitle: "Dashboard",
+    email: "Email",
+    password: "Password",
+    fullName: "Full name",
+    companyName: "Company name",
+    submitLogin: "Login",
+    submitRegister: "Register",
+    currentUser: "Current user",
+    role: "Role",
+    notLoggedIn: "Not logged in",
+    openSwagger: "Open Swagger",
+    endpointPanel: "Endpoint Access Panel",
+    response: "Response",
+    loadProducts: "Load Products",
+    createQuote: "Create Quote",
+    productId: "Product ID",
+    quantity: "Quantity",
+    quoteId: "Quote ID",
+    orderId: "Order ID",
+    statusValue: "Status",
+    createOrder: "Create Order From Quote",
+    updateQuoteStatus: "Update Quote Status",
+    loadMyQuotes: "Load My Quotes",
+    loadMyOrders: "Load My Orders",
+    loadAllQuotes: "Load All Quotes",
+    loadAllOrders: "Load All Orders",
+    createInternalUser: "Create Internal User",
+    userRole: "User role",
+    adminOnly: "Admin / super_admin only",
+    customerTools: "Customer Tools",
+    adminTools: "Admin Tools",
+    publicTools: "Public Tools",
   },
   tr: {
+    portal: "Ürün ve Teklif Portalı",
     language: "TR",
     otherLanguage: "EN",
-    otherPath: "/en/",
     nav: {
       home: "Ana Sayfa",
       products: "Ürünler",
@@ -125,105 +69,48 @@ const translations = {
       orders: "Siparişler",
       admin: "Admin",
       api: "API",
+      dashboard: "Panel",
+      login: "Giriş",
+      register: "Kayıt",
+      logout: "Çıkış",
     },
     heroTitle: "Temiz teknoloji ürün ve teklif yönetim portalı.",
     heroText:
-      "FastAPI backend tarafından desteklenen ürün görüntüleme, teklif talepleri, sipariş takibi ve admin iş akışları için RePG tarzı frontend.",
-    primaryCta: "Ürünleri İncele",
-    secondaryCta: "API Dokümantasyonu",
-    statusTitle: "Canlı Backend",
-    statusItems: ["FastAPI", "PostgreSQL", "JWT Auth", "Teklif İş Akışı"],
-    introTitle: "Yenilenebilir enerji ve su teknolojisi iş akışları etrafında kuruldu.",
-    introText:
-      "Arayüz, RePG'nin enerji ve su teknolojisi konumlandırmasından ilham alan temiz kurumsal bir düzen izlerken backend projesinin ürün, teklif, sipariş ve admin yeteneklerini sunar.",
-    cards: [
-      {
-        title: "Ürün Kataloğu",
-        text: "Public kullanıcılar ürünleri görüntüleyebilir ve ürün detaylarını inceleyebilir.",
-        link: "/tr/products",
-      },
-      {
-        title: "Teklif İş Akışı",
-        text: "Giriş yapan kullanıcılar teklif talebi oluşturabilir ve teklif geçmişini görebilir.",
-        link: "/tr/quotes",
-      },
-      {
-        title: "Sipariş Takibi",
-        text: "Kullanıcılar onaylanmış tekliflerden oluşturulan siparişleri görüntüleyebilir.",
-        link: "/tr/orders",
-      },
-      {
-        title: "Admin Kontrolleri",
-        text: "Adminler ürünleri, teklif durumlarını, sipariş oluşturmayı ve iç kullanıcıları yönetebilir.",
-        link: "/tr/admin",
-      },
-    ],
-    pages: {
-      products: {
-        title: "Ürünler",
-        text: "Bu sayfa ürün kataloğu ve ürün detay erişimi için kullanılacak.",
-        actions: [
-          ["GET /products/", "Public ürünleri listele", `${API_BASE}/docs#/products`],
-          ["GET /products/{product_id}", "Tek ürünü görüntüle", `${API_BASE}/docs#/products`],
-        ],
-      },
-      login: {
-        title: "Giriş",
-        text: "Bu sayfa daha sonra JWT login ve token saklama için kullanılacak.",
-        actions: [
-          ["POST /auth/login", "Giriş yap ve access token al", `${API_BASE}/docs#/auth`],
-          ["GET /auth/me", "Mevcut kullanıcıyı kontrol et", `${API_BASE}/docs#/auth`],
-        ],
-      },
-      register: {
-        title: "Kayıt",
-        text: "Bu sayfa daha sonra public müşteri kaydı için kullanılacak.",
-        actions: [
-          ["POST /users/", "Public kullanıcı hesabı oluştur", `${API_BASE}/docs#/users`],
-        ],
-      },
-      quotes: {
-        title: "Teklifler",
-        text: "Bu sayfa daha sonra teklif oluşturma ve teklif geçmişi için kullanılacak.",
-        actions: [
-          ["POST /quotes/", "Teklif talebi oluştur", `${API_BASE}/docs#/quotes`],
-          ["GET /quotes/my", "Tekliflerimi görüntüle", `${API_BASE}/docs#/quotes`],
-          ["GET /quotes/{quote_id}", "Tek teklifi görüntüle", `${API_BASE}/docs#/quotes`],
-        ],
-      },
-      orders: {
-        title: "Siparişler",
-        text: "Bu sayfa daha sonra sipariş geçmişi ve sipariş detayları için kullanılacak.",
-        actions: [
-          ["GET /orders/my", "Siparişlerimi görüntüle", `${API_BASE}/docs#/orders`],
-          ["GET /orders/{order_id}", "Tek siparişi görüntüle", `${API_BASE}/docs#/orders`],
-        ],
-      },
-      admin: {
-        title: "Admin Paneli",
-        text: "Bu sayfa daha sonra admin-only ürün, teklif, sipariş ve kullanıcı kontrolleri için kullanılacak.",
-        actions: [
-          ["POST /products/", "Ürün oluştur", `${API_BASE}/docs#/products`],
-          ["PUT /products/{product_id}", "Ürün güncelle", `${API_BASE}/docs#/products`],
-          ["DELETE /products/{product_id}", "Ürün sil", `${API_BASE}/docs#/products`],
-          ["GET /quotes/", "Tüm teklifleri listele", `${API_BASE}/docs#/quotes`],
-          ["PATCH /quotes/{quote_id}/status", "Teklifi onayla veya reddet", `${API_BASE}/docs#/quotes`],
-          ["POST /orders/from-quote/{quote_id}", "Tekliften sipariş oluştur", `${API_BASE}/docs#/orders`],
-          ["GET /orders/", "Tüm siparişleri listele", `${API_BASE}/docs#/orders`],
-          ["POST /admin/users/", "İç admin kullanıcısı oluştur", `${API_BASE}/docs#/admin-users`],
-        ],
-      },
-      api: {
-        title: "API Endpoint Erişimi",
-        text: "Projede mevcut backend endpointleri için doğrudan erişim paneli.",
-        actions: [
-          ["GET /", "Root health endpoint", `${API_BASE}/`],
-          ["Swagger Docs", "Interactive OpenAPI dokümantasyonu", `${API_BASE}/docs`],
-          ["OpenAPI JSON", "Raw OpenAPI şeması", `${API_BASE}/openapi.json`],
-        ],
-      },
-    },
-    footer: "RePG Product & Quote Management API için frontend prototipi.",
+      "Ürünleri inceleyin, teklif isteyin, siparişleri takip edin ve rol bazlı backend iş akışlarını tek frontend üzerinden kullanın.",
+    loginTitle: "Giriş",
+    registerTitle: "Kayıt",
+    dashboardTitle: "Panel",
+    email: "Email",
+    password: "Şifre",
+    fullName: "Ad Soyad",
+    companyName: "Şirket adı",
+    submitLogin: "Giriş",
+    submitRegister: "Kayıt",
+    currentUser: "Mevcut kullanıcı",
+    role: "Rol",
+    notLoggedIn: "Giriş yapılmadı",
+    openSwagger: "Swagger Aç",
+    endpointPanel: "Endpoint Erişim Paneli",
+    response: "Cevap",
+    loadProducts: "Ürünleri Yükle",
+    createQuote: "Teklif Oluştur",
+    productId: "Ürün ID",
+    quantity: "Miktar",
+    quoteId: "Teklif ID",
+    orderId: "Sipariş ID",
+    statusValue: "Durum",
+    createOrder: "Tekliften Sipariş Oluştur",
+    updateQuoteStatus: "Teklif Durumunu Güncelle",
+    loadMyQuotes: "Tekliflerimi Yükle",
+    loadMyOrders: "Siparişlerimi Yükle",
+    loadAllQuotes: "Tüm Teklifleri Yükle",
+    loadAllOrders: "Tüm Siparişleri Yükle",
+    createInternalUser: "İç Kullanıcı Oluştur",
+    userRole: "Kullanıcı rolü",
+    adminOnly: "Sadece admin / super_admin",
+    customerTools: "Müşteri Araçları",
+    adminTools: "Admin Araçları",
+    publicTools: "Public Araçlar",
   },
 };
 
@@ -236,7 +123,74 @@ function getPage() {
   return parts[1] || "home";
 }
 
-function HomePage({ t }) {
+function getBase(language) {
+  return `/${language}`;
+}
+
+async function apiRequest(path, options = {}, token = "") {
+  const headers = {
+    "Content-Type": "application/json",
+    ...(options.headers || {}),
+  };
+
+  if (token) {
+    headers.Authorization = `Bearer ${token}`;
+  }
+
+  const response = await fetch(`${API_BASE}${path}`, {
+    ...options,
+    headers,
+  });
+
+  const data = await response.json().catch(() => null);
+
+  if (!response.ok) {
+    throw new Error(JSON.stringify(data || { detail: response.statusText }, null, 2));
+  }
+
+  return data;
+}
+
+function Header({ language, t, user, onLogout }) {
+  const base = getBase(language);
+  const otherBase = language === "en" ? "/tr/" : "/en/";
+
+  return (
+    <header className="site-header">
+      <a className="brand" href={`${base}/`}>
+        <div className="brand-mark">RePG</div>
+        <div>
+          <p className="brand-kicker">Renewable Energy Power Generation</p>
+          <h1>{t.portal}</h1>
+        </div>
+      </a>
+
+      <nav className="nav-links" aria-label="Main navigation">
+        <a href={`${base}/`}>{t.nav.home}</a>
+        <a href={`${base}/products`}>{t.nav.products}</a>
+        <a href={`${base}/quotes`}>{t.nav.quotes}</a>
+        <a href={`${base}/orders`}>{t.nav.orders}</a>
+        <a href={`${base}/admin`}>{t.nav.admin}</a>
+        <a href={`${base}/api`}>{t.nav.api}</a>
+        <a href={`${base}/dashboard`}>{t.nav.dashboard}</a>
+        {!user && <a href={`${base}/login`}>{t.nav.login}</a>}
+        {!user && <a href={`${base}/register`}>{t.nav.register}</a>}
+        {user && (
+          <button className="nav-button" type="button" onClick={onLogout}>
+            {t.nav.logout}
+          </button>
+        )}
+        <a className="language-switch" href={otherBase}>
+          {t.otherLanguage}
+        </a>
+      </nav>
+    </header>
+  );
+}
+
+function HomePage({ language, t }) {
+  const base = getBase(language);
+
   return (
     <>
       <section className="hero-section">
@@ -246,118 +200,798 @@ function HomePage({ t }) {
           <p className="hero-text">{t.heroText}</p>
 
           <div className="hero-actions">
-            <a className="primary-button" href={`/${t.language.toLowerCase()}/products`}>
-              {t.primaryCta}
+            <a className="primary-button" href={`${base}/products`}>
+              {t.nav.products}
             </a>
             <a className="secondary-button" href={`${API_BASE}/docs`}>
-              {t.secondaryCta}
+              {t.openSwagger}
             </a>
           </div>
         </div>
 
         <aside className="hero-card">
-          <p>{t.statusTitle}</p>
-          <h3>api.ayartuerk.me</h3>
-          {t.statusItems.map((item) => (
-            <span key={item}>{item}</span>
-          ))}
+          <p>api.ayartuerk.me</p>
+          <h3>Live Backend</h3>
+          <span>FastAPI</span>
+          <span>PostgreSQL</span>
+          <span>JWT Auth</span>
+          <span>Role-Based Access</span>
         </aside>
       </section>
 
-      <section className="intro-section">
-        <p className="section-label">Clean Technology</p>
-        <h2>{t.introTitle}</h2>
-        <p>{t.introText}</p>
-      </section>
-
       <section className="card-grid-section">
-        {t.cards.map((card) => (
-          <a className="feature-card" href={card.link} key={card.title}>
-            <h3>{card.title}</h3>
-            <p>{card.text}</p>
-            <span>Open →</span>
-          </a>
-        ))}
-      </section>
+        <a className="feature-card" href={`${base}/products`}>
+          <h3>{t.nav.products}</h3>
+          <p>GET /products/ - GET /products/&#123;product_id&#125;</p>
+          <span>Open →</span>
+        </a>
 
-      <section className="endpoint-panel">
-        <div>
-          <p className="section-label">API</p>
-          <h2>{t.pages.api.title}</h2>
-          <p>{t.pages.api.text}</p>
-        </div>
+        <a className="feature-card" href={`${base}/quotes`}>
+          <h3>{t.nav.quotes}</h3>
+          <p>POST /quotes/ - GET /quotes/my - GET /quotes/&#123;quote_id&#125;</p>
+          <span>Open →</span>
+        </a>
 
-        <div className="endpoint-list">
-          {t.pages.api.actions.map(([method, text, link]) => (
-            <a href={link} key={method}>
-              <strong>{method}</strong>
-              <span>{text}</span>
-            </a>
-          ))}
-        </div>
+        <a className="feature-card" href={`${base}/orders`}>
+          <h3>{t.nav.orders}</h3>
+          <p>GET /orders/my - GET /orders/&#123;order_id&#125;</p>
+          <span>Open →</span>
+        </a>
+
+        <a className="feature-card" href={`${base}/admin`}>
+          <h3>{t.nav.admin}</h3>
+          <p>Products, quotes, orders, and internal users.</p>
+          <span>Open →</span>
+        </a>
       </section>
     </>
   );
 }
 
-function DetailPage({ page, t }) {
-  const data = t.pages[page] || t.pages.api;
+function LoginPage({ language, t, onLogin, setOutput }) {
+  const [form, setForm] = useState({
+    email: "",
+    password: "",
+  });
+  const [showPassword, setShowPassword] = useState(false);
+  const [loginError, setLoginError] = useState("");
+
+  async function handleSubmit(event) {
+    event.preventDefault();
+    setLoginError("");
+
+    try {
+      const tokenData = await apiRequest("/auth/login", {
+        method: "POST",
+        body: JSON.stringify(form),
+      });
+
+      localStorage.setItem("repg_token", tokenData.access_token);
+
+      const userData = await apiRequest("/auth/me", {}, tokenData.access_token);
+      onLogin(tokenData.access_token, userData);
+      setOutput(userData);
+      window.history.pushState({}, "", `${getBase(language)}/dashboard`);
+      window.dispatchEvent(new PopStateEvent("popstate"));
+    } catch {
+      setLoginError("Invalid email or password");
+      setOutput(null);
+    }
+  }
+
+  return (
+    <FormShell title={t.loginTitle}>
+      <form className="form-card" onSubmit={handleSubmit}>
+        {loginError && <p className="form-error">{loginError}</p>}
+
+        <label>
+          {t.email}
+          <input
+            type="email"
+            value={form.email}
+            onChange={(event) => setForm({ ...form, email: event.target.value })}
+            required
+          />
+        </label>
+
+        <label>
+          {t.password}
+          <div className="password-field">
+            <input
+              type={showPassword ? "text" : "password"}
+              value={form.password}
+              onChange={(event) => setForm({ ...form, password: event.target.value })}
+              required
+            />
+            <button
+              className="password-toggle"
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              aria-label={showPassword ? "Hide password" : "Show password"}
+            >
+              <span className={showPassword ? "eye-icon hidden" : "eye-icon"} />
+            </button>
+          </div>
+        </label>
+
+        <button className="primary-button" type="submit">
+          {t.submitLogin}
+        </button>
+      </form>
+    </FormShell>
+  );
+}
+
+function RegisterPage({ t, setOutput }) {
+  const [form, setForm] = useState({
+    full_name: "",
+    email: "",
+    password: "",
+    confirm_password: "",
+    company_name: "",
+  });
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
+  async function handleSubmit(event) {
+    event.preventDefault();
+
+    if (form.password !== form.confirm_password) {
+      setOutput("Passwords do not match.");
+      return;
+    }
+
+    try {
+      const data = await apiRequest("/users/", {
+        method: "POST",
+        body: JSON.stringify({
+          full_name: form.full_name,
+          email: form.email,
+          password: form.password,
+          company_name: form.company_name || null,
+        }),
+      });
+
+      setOutput(data);
+    } catch (error) {
+      setOutput(error.message);
+    }
+  }
+
+  return (
+    <FormShell title={t.registerTitle}>
+      <form className="form-card" onSubmit={handleSubmit}>
+        <label>
+          {t.fullName}
+          <input
+            value={form.full_name}
+            onChange={(event) => setForm({ ...form, full_name: event.target.value })}
+            required
+          />
+        </label>
+
+        <label>
+          {t.email}
+          <input
+            type="email"
+            value={form.email}
+            onChange={(event) => setForm({ ...form, email: event.target.value })}
+            required
+          />
+        </label>
+
+        <label>
+          {t.password}
+          <div className="password-field">
+            <input
+              type={showPassword ? "text" : "password"}
+              value={form.password}
+              onChange={(event) => setForm({ ...form, password: event.target.value })}
+              required
+            />
+            <button
+              className="password-toggle"
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              aria-label={showPassword ? "Hide password" : "Show password"}
+            >
+              <span className={showPassword ? "eye-icon hidden" : "eye-icon"} />
+            </button>
+          </div>
+        </label>
+
+        <label>
+          Confirm password
+          <div className="password-field">
+            <input
+              type={showConfirmPassword ? "text" : "password"}
+              value={form.confirm_password}
+              onChange={(event) =>
+                setForm({ ...form, confirm_password: event.target.value })
+              }
+              required
+            />
+            <button
+              className="password-toggle"
+              type="button"
+              onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+              aria-label={
+                showConfirmPassword ? "Hide confirm password" : "Show confirm password"
+              }
+            >
+              <span className={showConfirmPassword ? "eye-icon hidden" : "eye-icon"} />
+            </button>
+          </div>
+        </label>
+
+        <label>
+          {t.companyName}
+          <input
+            value={form.company_name}
+            onChange={(event) =>
+              setForm({ ...form, company_name: event.target.value })
+            }
+          />
+        </label>
+
+        <button className="primary-button" type="submit">
+          {t.submitRegister}
+        </button>
+      </form>
+    </FormShell>
+  );
+}
+
+function ProductsPage({ t, token, setOutput }) {
+  async function loadProducts() {
+    try {
+      const data = await apiRequest("/products/?limit=100");
+      setOutput(data);
+    } catch (error) {
+      setOutput(error.message);
+    }
+  }
+
+  async function createDemoProduct() {
+    try {
+      const data = await apiRequest(
+        "/products/",
+        {
+          method: "POST",
+          body: JSON.stringify({
+            name: "Demo Product",
+            description: "Created from frontend",
+            price: "100.00",
+            currency: "EUR",
+            sku: `DEMO-${Date.now()}`,
+            category: "energy",
+            subcategory: "demo",
+            product_type: "system",
+            stock_status: "available",
+            stock_quantity: 10,
+            lead_time: "2 weeks",
+            technical_specs: {
+              source: "frontend",
+            },
+            is_active: true,
+          }),
+        },
+        token
+      );
+
+      setOutput(data);
+    } catch (error) {
+      setOutput(error.message);
+    }
+  }
+
+  return (
+    <ToolPage title={t.nav.products}>
+      <ActionButton label="GET /products/" text={t.loadProducts} onClick={loadProducts} />
+      <ActionButton
+        label="POST /products/"
+        text="Create demo product"
+        onClick={createDemoProduct}
+      />
+    </ToolPage>
+  );
+}
+
+function QuotesPage({ t, token, setOutput }) {
+  const [form, setForm] = useState({
+    product_id: "",
+    quantity: 1,
+    quote_id: "",
+    status_value: "approved",
+  });
+
+  async function createQuote() {
+    try {
+      const data = await apiRequest(
+        "/quotes/",
+        {
+          method: "POST",
+          body: JSON.stringify({
+            items: [
+              {
+                product_id: form.product_id,
+                quantity: Number(form.quantity),
+              },
+            ],
+          }),
+        },
+        token
+      );
+
+      setOutput(data);
+    } catch (error) {
+      setOutput(error.message);
+    }
+  }
+
+  async function loadMyQuotes() {
+    try {
+      const data = await apiRequest("/quotes/my", {}, token);
+      setOutput(data);
+    } catch (error) {
+      setOutput(error.message);
+    }
+  }
+
+  async function loadAllQuotes() {
+    try {
+      const data = await apiRequest("/quotes/?limit=100", {}, token);
+      setOutput(data);
+    } catch (error) {
+      setOutput(error.message);
+    }
+  }
+
+  async function updateQuoteStatus() {
+    try {
+      const data = await apiRequest(
+        `/quotes/${form.quote_id}/status?status_value=${form.status_value}`,
+        {
+          method: "PATCH",
+        },
+        token
+      );
+
+      setOutput(data);
+    } catch (error) {
+      setOutput(error.message);
+    }
+  }
+
+  return (
+    <ToolPage title={t.nav.quotes}>
+      <div className="form-card compact">
+        <label>
+          {t.productId}
+          <input
+            value={form.product_id}
+            onChange={(event) => setForm({ ...form, product_id: event.target.value })}
+          />
+        </label>
+
+        <label>
+          {t.quantity}
+          <input
+            type="number"
+            min="1"
+            value={form.quantity}
+            onChange={(event) => setForm({ ...form, quantity: event.target.value })}
+          />
+        </label>
+
+        <button className="primary-button" type="button" onClick={createQuote}>
+          {t.createQuote}
+        </button>
+      </div>
+
+      <ActionButton label="GET /quotes/my" text={t.loadMyQuotes} onClick={loadMyQuotes} />
+      <ActionButton label="GET /quotes/" text={t.loadAllQuotes} onClick={loadAllQuotes} />
+
+      <div className="form-card compact">
+        <label>
+          {t.quoteId}
+          <input
+            value={form.quote_id}
+            onChange={(event) => setForm({ ...form, quote_id: event.target.value })}
+          />
+        </label>
+
+        <label>
+          {t.statusValue}
+          <select
+            value={form.status_value}
+            onChange={(event) =>
+              setForm({ ...form, status_value: event.target.value })
+            }
+          >
+            <option value="pending">pending</option>
+            <option value="approved">approved</option>
+            <option value="rejected">rejected</option>
+            <option value="converted">converted</option>
+          </select>
+        </label>
+
+        <button className="primary-button" type="button" onClick={updateQuoteStatus}>
+          {t.updateQuoteStatus}
+        </button>
+      </div>
+    </ToolPage>
+  );
+}
+
+function OrdersPage({ t, token, setOutput }) {
+  const [quoteId, setQuoteId] = useState("");
+
+  async function loadMyOrders() {
+    try {
+      const data = await apiRequest("/orders/my", {}, token);
+      setOutput(data);
+    } catch (error) {
+      setOutput(error.message);
+    }
+  }
+
+  async function loadAllOrders() {
+    try {
+      const data = await apiRequest("/orders/?limit=100", {}, token);
+      setOutput(data);
+    } catch (error) {
+      setOutput(error.message);
+    }
+  }
+
+  async function createOrder() {
+    try {
+      const data = await apiRequest(
+        `/orders/from-quote/${quoteId}`,
+        {
+          method: "POST",
+        },
+        token
+      );
+
+      setOutput(data);
+    } catch (error) {
+      setOutput(error.message);
+    }
+  }
+
+  return (
+    <ToolPage title={t.nav.orders}>
+      <ActionButton label="GET /orders/my" text={t.loadMyOrders} onClick={loadMyOrders} />
+      <ActionButton label="GET /orders/" text={t.loadAllOrders} onClick={loadAllOrders} />
+
+      <div className="form-card compact">
+        <label>
+          {t.quoteId}
+          <input value={quoteId} onChange={(event) => setQuoteId(event.target.value)} />
+        </label>
+
+        <button className="primary-button" type="button" onClick={createOrder}>
+          {t.createOrder}
+        </button>
+      </div>
+    </ToolPage>
+  );
+}
+
+function AdminPage({ t, token, setOutput }) {
+  const [form, setForm] = useState({
+    full_name: "",
+    email: "",
+    password: "",
+    company_name: "",
+    role: "admin",
+  });
+
+  async function createInternalUser() {
+    try {
+      const data = await apiRequest(
+        "/admin/users/",
+        {
+          method: "POST",
+          body: JSON.stringify({
+            ...form,
+            company_name: form.company_name || null,
+          }),
+        },
+        token
+      );
+
+      setOutput(data);
+    } catch (error) {
+      setOutput(error.message);
+    }
+  }
+
+  return (
+    <ToolPage title={t.nav.admin}>
+      <p className="muted">{t.adminOnly}</p>
+
+      <div className="form-card compact">
+        <label>
+          {t.fullName}
+          <input
+            value={form.full_name}
+            onChange={(event) => setForm({ ...form, full_name: event.target.value })}
+          />
+        </label>
+
+        <label>
+          {t.email}
+          <input
+            type="email"
+            value={form.email}
+            onChange={(event) => setForm({ ...form, email: event.target.value })}
+          />
+        </label>
+
+        <label>
+          {t.password}
+          <input
+            type="password"
+            value={form.password}
+            onChange={(event) => setForm({ ...form, password: event.target.value })}
+          />
+        </label>
+
+        <label>
+          {t.companyName}
+          <input
+            value={form.company_name}
+            onChange={(event) =>
+              setForm({ ...form, company_name: event.target.value })
+            }
+          />
+        </label>
+
+        <label>
+          {t.userRole}
+          <select
+            value={form.role}
+            onChange={(event) => setForm({ ...form, role: event.target.value })}
+          >
+            <option value="customer">customer</option>
+            <option value="admin">admin</option>
+            <option value="sales_manager">sales_manager</option>
+            <option value="operations_staff">operations_staff</option>
+            <option value="product_manager">product_manager</option>
+            <option value="super_admin">super_admin</option>
+          </select>
+        </label>
+
+        <button className="primary-button" type="button" onClick={createInternalUser}>
+          {t.createInternalUser}
+        </button>
+      </div>
+    </ToolPage>
+  );
+}
+
+function DashboardPage({ t, user, language }) {
+  const base = getBase(language);
+  const isAdmin = user && ["admin", "super_admin"].includes(user.role);
 
   return (
     <section className="detail-page">
-      <p className="section-label">RePG Portal</p>
-      <h2>{data.title}</h2>
-      <p>{data.text}</p>
+      <p className="section-label">{t.dashboardTitle}</p>
+      <h2>{user ? user.full_name : t.notLoggedIn}</h2>
 
-      <div className="endpoint-list large">
-        {data.actions.map(([method, text, link]) => (
-          <a href={link} key={`${method}-${text}`}>
-            <strong>{method}</strong>
-            <span>{text}</span>
+      {user && (
+        <div className="user-card">
+          <p>
+            <strong>{t.email}:</strong> {user.email}
+          </p>
+          <p>
+            <strong>{t.role}:</strong> {user.role}
+          </p>
+        </div>
+      )}
+
+      <div className="dashboard-grid">
+        <a className="feature-card" href={`${base}/products`}>
+          <h3>{t.publicTools}</h3>
+          <p>GET /products/</p>
+        </a>
+
+        <a className="feature-card" href={`${base}/quotes`}>
+          <h3>{t.customerTools}</h3>
+          <p>POST /quotes/ - GET /quotes/my</p>
+        </a>
+
+        <a className="feature-card" href={`${base}/orders`}>
+          <h3>{t.nav.orders}</h3>
+          <p>GET /orders/my</p>
+        </a>
+
+        {isAdmin && (
+          <a className="feature-card" href={`${base}/admin`}>
+            <h3>{t.adminTools}</h3>
+            <p>Products, quotes, orders, users</p>
           </a>
-        ))}
+        )}
       </div>
     </section>
   );
 }
 
+function ApiPage({ t }) {
+  return (
+    <ToolPage title={t.endpointPanel}>
+      <a className="endpoint-link" href={`${API_BASE}/`}>
+        <strong>GET /</strong>
+        <span>Root endpoint</span>
+      </a>
+
+      <a className="endpoint-link" href={`${API_BASE}/docs`}>
+        <strong>Swagger Docs</strong>
+        <span>Interactive API docs</span>
+      </a>
+
+      <a className="endpoint-link" href={`${API_BASE}/openapi.json`}>
+        <strong>OpenAPI JSON</strong>
+        <span>Raw API schema</span>
+      </a>
+    </ToolPage>
+  );
+}
+
+function ToolPage({ title, children }) {
+  return (
+    <section className="detail-page">
+      <p className="section-label">RePG API</p>
+      <h2>{title}</h2>
+      <div className="tool-grid">{children}</div>
+    </section>
+  );
+}
+
+function FormShell({ title, children }) {
+  return (
+    <section className="detail-page">
+      <p className="section-label">RePG Portal</p>
+      <h2>{title}</h2>
+      {children}
+    </section>
+  );
+}
+
+function ActionButton({ label, text, onClick }) {
+  return (
+    <button className="endpoint-link button-link" type="button" onClick={onClick}>
+      <strong>{label}</strong>
+      <span>{text}</span>
+    </button>
+  );
+}
+
+function OutputPanel({ t, output }) {
+  return (
+    <section className="output-panel">
+      <h3>{t.response}</h3>
+      <pre>{typeof output === "string" ? output : JSON.stringify(output, null, 2)}</pre>
+    </section>
+  );
+}
+
 function App() {
+  const [path, setPath] = useState(window.location.pathname);
+  const [token, setToken] = useState(localStorage.getItem("repg_token") || "");
+  const [user, setUser] = useState(null);
+  const [output, setOutput] = useState(null);
+
   const language = getLanguage();
   const page = getPage();
-  const t = translations[language];
-  const base = `/${language}`;
+  const t = text[language];
+
+  const currentUserLabel = useMemo(() => {
+    if (!user) {
+      return t.notLoggedIn;
+    }
+
+    return `${user.full_name} - ${user.role}`;
+  }, [t.notLoggedIn, user]);
+
+  useEffect(() => {
+    function updatePath() {
+      setPath(window.location.pathname);
+    }
+
+    window.addEventListener("popstate", updatePath);
+    return () => window.removeEventListener("popstate", updatePath);
+  }, []);
+
+  useEffect(() => {
+    if (!token) {
+      return;
+    }
+
+    apiRequest("/auth/me", {}, token)
+      .then((data) => {
+        setUser(data);
+      })
+      .catch(() => {
+        localStorage.removeItem("repg_token");
+        setToken("");
+        setUser(null);
+      });
+  }, [token, path]);
+
+  function handleLogin(nextToken, nextUser) {
+    setToken(nextToken);
+    setUser(nextUser);
+  }
+
+  function handleLogout() {
+    localStorage.removeItem("repg_token");
+    setToken("");
+    setUser(null);
+    setOutput(null);
+  }
+
+  let pageContent = <HomePage language={language} t={t} />;
+
+  if (page === "login") {
+    pageContent = (
+      <LoginPage
+        language={language}
+        t={t}
+        onLogin={handleLogin}
+        setOutput={setOutput}
+      />
+    );
+  }
+
+  if (page === "register") {
+    pageContent = <RegisterPage t={t} setOutput={setOutput} />;
+  }
+
+  if (page === "dashboard") {
+    pageContent = <DashboardPage language={language} t={t} user={user} />;
+  }
+
+  if (page === "products") {
+    pageContent = <ProductsPage t={t} token={token} setOutput={setOutput} />;
+  }
+
+  if (page === "quotes") {
+    pageContent = <QuotesPage t={t} token={token} setOutput={setOutput} />;
+  }
+
+  if (page === "orders") {
+    pageContent = <OrdersPage t={t} token={token} setOutput={setOutput} />;
+  }
+
+  if (page === "admin") {
+    pageContent = <AdminPage t={t} token={token} setOutput={setOutput} />;
+  }
+
+  if (page === "api") {
+    pageContent = <ApiPage t={t} />;
+  }
 
   return (
     <main className="page-shell">
-      <header className="site-header">
-        <a className="brand" href={`${base}/`}>
-          <div className="brand-mark">RePG</div>
-          <div>
-            <p className="brand-kicker">Renewable Energy Power Generation</p>
-            <h1>Product & Quote Portal</h1>
-          </div>
-        </a>
+      <Header language={language} t={t} user={user} onLogout={handleLogout} />
 
-        <nav className="nav-links" aria-label="Main navigation">
-          <a href={`${base}/`}>{t.nav.home}</a>
-          <a href={`${base}/products`}>{t.nav.products}</a>
-          <a href={`${base}/quotes`}>{t.nav.quotes}</a>
-          <a href={`${base}/orders`}>{t.nav.orders}</a>
-          <a href={`${base}/admin`}>{t.nav.admin}</a>
-          <a href={`${base}/api`}>{t.nav.api}</a>
-          <a className="language-switch" href={t.otherPath}>
-            {t.otherLanguage}
-          </a>
-        </nav>
-      </header>
+      <div className="status-strip">
+        <span>{t.currentUser}: {currentUserLabel}</span>
+      </div>
 
-      {page === "home" ? <HomePage t={t} /> : <DetailPage page={page} t={t} />}
+      {pageContent}
+
+      {output && <OutputPanel t={t} output={output} />}
 
       <footer className="site-footer">
-        <p>{t.footer}</p>
+        <p>{t.portal}</p>
         <div>
-          <a href={`${base}/login`}>Login</a>
-          <a href={`${base}/register`}>Register</a>
+          <a href={`${getBase(language)}/login`}>{t.nav.login}</a>
+          <a href={`${getBase(language)}/register`}>{t.nav.register}</a>
           <a href={`${API_BASE}/docs`}>Swagger</a>
         </div>
       </footer>
