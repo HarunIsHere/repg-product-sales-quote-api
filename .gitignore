@@ -10,3 +10,6 @@ alembic/versions/__pycache__/
 keys/
 
 frontend_backup_working/
+
+__pycache__/
+*.pyc

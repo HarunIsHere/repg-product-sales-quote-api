@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 
 from app.api.admin_users import router as admin_users_router
 from app.api.auth import router as auth_router
@@ -10,6 +11,17 @@ from app.api.quotes import router as quotes_router
 from app.api.orders import router as orders_router
 
 app = FastAPI(title="RePG Product, Sales & Quote Management API")
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "https://ayartuerk.me",
+        "https://frontend.ayartuerk.me",
+        "http://127.0.0.1:5173",
+    ],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 app.include_router(users_router)
 app.include_router(auth_router)
